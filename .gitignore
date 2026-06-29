@@ -1,0 +1,60 @@
+# Виртуальное окружение
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# Файлы с секретами
+.env
+*.env
+*.env.local
+*.env.production
+
+# База данных
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Логи
+*.log
+logs/
+
+# Миграции (если хотите хранить в Git - уберите)
+# migrations/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/
+.webassets-cache
+
+# Отчеты о тестах
+htmlcov/
+.tox/
+.coverage
+.pytest_cache/
+
+# Докер
+*.pid
+docker-compose.override.yml

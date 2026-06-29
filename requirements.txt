@@ -1,0 +1,7 @@
+Flask==2.3.2
+peewee==3.16.2
+Flask-Admin==1.6.1
+WTForms==3.0.1
+peewee-migrate==1.1.8
+wtf-peewee==3.0.0
+python-dotenv==1.0.0

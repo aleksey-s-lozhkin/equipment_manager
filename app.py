@@ -17,6 +17,8 @@ app = Flask(__name__)
 
 # Берем SECRET_KEY из .env или используем значение по умолчанию
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-for-testing-only')
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY', 'csrf-secret-key-change-me')
 
 # Дополнительные настройки из .env
 app.config['DEBUG'] = os.getenv('DEBUG', 'True').lower() == 'true'

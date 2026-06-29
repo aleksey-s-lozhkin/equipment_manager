@@ -40,9 +40,9 @@ def migrate(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
         
         # --- Корневое подразделение ---
         root_dept, created = Department.get_or_create(
-            name="Головной офис",
+            name="Аппарат управления",
             defaults={
-                'short_name': 'ГО',
+                'short_name': 'АУП',
                 'code': '001'
             }
         )
@@ -50,59 +50,59 @@ def migrate(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
         
         # --- Дочерние подразделения ---
         it_dept, _ = Department.get_or_create(
-            name="IT-отдел",
+            name="САСУ",
             defaults={
                 'parent': root_dept,
-                'short_name': 'IT',
-                'code': 'IT-001'
+                'short_name': 'ASU',
+                'code': '002'
             }
         )
         print(f"  ✅ Создано подразделение: {it_dept}")
         
         hr_dept, _ = Department.get_or_create(
-            name="Отдел кадров",
+            name="СКИПиА, ТМ и М",
             defaults={
                 'parent': root_dept,
-                'short_name': 'HR',
-                'code': 'HR-001'
+                'short_name': 'KIP',
+                'code': '003'
             }
         )
         print(f"  ✅ Создано подразделение: {hr_dept}")
         
         # --- Корневое место ---
         root_location, _ = Location.get_or_create(
-            name="Главное здание",
+            name="Производственно-эксплуатационный блок",
             defaults={
                 'location_type': 'building',
-                'description': 'Основное здание компании'
+                'description': 'ПЭБ'
             }
         )
         print(f"  ✅ Создано место: {root_location}")
         
         # --- Дочерние места ---
         office_1, _ = Location.get_or_create(
-            name="Офис 101",
+            name="Кабинет 205",
             defaults={
                 'location_type': 'room',
                 'parent': root_location,
-                'description': 'IT-отдел'
+                'description': 'Начальник АСУ'
             }
         )
         print(f"  ✅ Создано место: {office_1}")
         
         office_2, _ = Location.get_or_create(
-            name="Офис 102",
+            name="Кабинет 206",
             defaults={
                 'location_type': 'room',
                 'parent': root_location,
-                'description': 'Отдел кадров'
+                'description': 'Инженеры АСУ'
             }
         )
         print(f"  ✅ Создано место: {office_2}")
         
         # --- Администратор системы ---
         admin_user, _ = Employee.get_or_create(
-            email='admin@company.com',
+            email='admin@pik.com',
             defaults={
                 'first_name': 'Системный',
                 'last_name': 'Администратор',
@@ -110,14 +110,14 @@ def migrate(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
                 'department': it_dept,
                 'position': 'Главный администратор',
                 'is_active': True,
-                'phone': '+7 (999) 123-45-67'
+                'phone': '52-202'
             }
         )
         print(f"  ✅ Создан пользователь: {admin_user}")
         
         # --- Обычный сотрудник ---
         hr_user, _ = Employee.get_or_create(
-            email='hr@company.com',
+            email='ingener_asu@pik.com',
             defaults={
                 'first_name': 'Анна',
                 'last_name': 'Иванова',
@@ -125,7 +125,7 @@ def migrate(migrator: Migrator, database: pw.Database, fake=False, **kwargs):
                 'department': hr_dept,
                 'position': 'Менеджер по персоналу',
                 'is_active': True,
-                'phone': '+7 (999) 765-43-21'
+                'phone': '52-XXX'
             }
         )
         print(f"  ✅ Создан пользователь: {hr_user}")

@@ -1,10 +1,5 @@
-from peewee import *
-from models import EquipmentLog, Equipment
-from datetime import datetime
-
-
 def fill_old_values_on_create(log_instance):
-    """Перед созданием лога подставляем текущие значения"""
+    """Перед созданием лога подставляем текущие значения из Equipment"""
     if log_instance.id:  # Только для новых записей
         return
 
@@ -32,7 +27,7 @@ def fill_old_values_on_create(log_instance):
 
 
 def update_equipment_from_log(log_instance):
-    """После создания записи обновляем Equipment"""
+    """После создания записи обновляем Equipment актуальными данными"""
     equipment = log_instance.equipment
     needs_save = False
     update_fields = []
@@ -69,19 +64,3 @@ def update_equipment_from_log(log_instance):
 
     if needs_save:
         equipment.save(only=update_fields)
-
-
-def generate_inventory_number(equipment_instance):
-    """Автогенерация инвентарного номера"""
-    if not equipment_instance.inventory_number:
-        year = datetime.now().year
-        last = Equipment.select().where(
-            Equipment.inventory_number.startswith(f'СВТ-{year}-')
-        ).count()
-        equipment_instance.inventory_number = f"СВТ-{year}-{last + 1:05d}"
-
-
-# Hook для EquipmentLog (используем в app.py при создании)
-def setup_signals():
-    """Регистрируем хуки для моделей"""
-    pass

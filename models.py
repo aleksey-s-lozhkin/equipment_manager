@@ -176,6 +176,7 @@ class Employee(BaseModel):
 
 # ---------- 6. Equipment ----------
 class Equipment(BaseModel):
+    """Средство вычислительной техники (СВТ)"""
     STATUS_CHOICES = [
         ('in_use', 'В эксплуатации'),
         ('reserve', 'В резерве'),
@@ -185,8 +186,17 @@ class Equipment(BaseModel):
     ]
 
     # Идентификаторы
-    inventory_number = CharField(max_length=50, unique=True, verbose_name="Инвентарный номер")
-    serial_number = CharField(max_length=100, unique=True, verbose_name="Серийный номер")
+    inventory_number = CharField(
+        max_length=50,
+        null=True,  # ← Разрешаем NULL
+        unique=True,  # ← Если указан, должен быть уникальным
+        verbose_name="Инвентарный номер"
+    )
+    serial_number = CharField(
+        max_length=100,
+        unique=True,
+        verbose_name="Серийный номер"
+    )
 
     # Связи
     model = ForeignKeyField(EquipmentModel, backref='equipment', on_delete='RESTRICT')
@@ -198,18 +208,31 @@ class Equipment(BaseModel):
     current_user = ForeignKeyField(Employee, backref='equipment_in_use', null=True, on_delete='SET NULL')
 
     # Даты
-    purchase_date = DateField(null=True, verbose_name="Дата покупки")
-    warranty_until = DateField(null=True, verbose_name="Гарантия до")
-    commissioning_date = DateField(null=True, verbose_name="Дата ввода в эксплуатацию")
+    delivery_date = DateField(  # ← Переименовано с purchase_date
+        null=True,
+        blank=True,
+        verbose_name="Дата поставки"
+    )
+    commissioning_date = DateField(
+        null=True,
+        blank=True,
+        verbose_name="Дата ввода в эксплуатацию"
+    )
 
     # Статус
-    status = CharField(max_length=20, choices=STATUS_CHOICES, default='in_use')
+    status = CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='in_use',
+        verbose_name="Статус"
+    )
 
     # Дополнительно
-    purchase_price = DecimalField(max_digits=12, decimal_places=2, null=True)
-    supplier = CharField(max_length=200, null=True)
-    contract_number = CharField(max_length=50, null=True)
-    description = TextField(null=True, verbose_name="Примечание")
+    description = TextField(
+        null=True,
+        blank=True,
+        verbose_name="Примечание"
+    )
 
     class Meta:
         verbose_name = "Средство вычислительной техники"
@@ -217,7 +240,7 @@ class Equipment(BaseModel):
         ordering = ['inventory_number']
 
     def __str__(self):
-        return f"{self.inventory_number} - {self.model.name}"
+        return f"{self.inventory_number or 'Без инв.номера'} - {self.model.name}"
 
     @property
     def full_location_path(self):

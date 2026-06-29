@@ -1,8 +1,8 @@
+# 🏢 Управление оборудованием
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.3.2-green.svg)](https://flask.palletsprojects.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-# 🏢 Управление оборудованием
-Веб-приложение для учёта средств вычислительной техники (СВТ) с админ-панелью на Flask + Peewee.
+## Веб-приложение для учёта средств вычислительной техники (СВТ) с админ-панелью на Flask + Peewee.
 
 ## 📋 Возможности
 - Управление оборудованием — добавление, редактирование, удаление СВТ
@@ -171,7 +171,7 @@ aleksey.s.lozhkin@gmail.com
 Если у вас возникли вопросы или проблемы, создайте Issue в репозитории.
 
 ## 📌 Changelog
-### v1.0.0 (2024-01-15)
+### v1.0.0 (2026-06-29)
 - Первый релиз
 
 - Базовая функциональность учёта оборудования

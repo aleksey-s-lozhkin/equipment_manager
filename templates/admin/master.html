@@ -1,0 +1,39 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+{{ super() }}
+<!-- Добавляем только Bootstrap классы, без кастомного CSS -->
+<style>
+    /* Только минимальное переопределение через Bootstrap */
+    .container {
+        max-width: 100% !important;
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+    }
+    .container-fluid {
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+    }
+    .row {
+        margin: 0 !important;
+    }
+    .col-md-12 {
+        padding: 0 !important;
+    }
+    .table {
+        width: 100% !important;
+    }
+    .form-control {
+        max-width: 100% !important;
+    }
+    .modal-dialog {
+        max-width: 90% !important;
+    }
+</style>
+{% endblock %}
+
+{% block page_body %}
+<div class="container-fluid">
+    {{ super() }}
+</div>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Заголовок -->
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mt-4 text-primary">🏢 Панель управления оборудованием</h1>
+            <p class="lead text-muted">Добро пожаловать в систему учёта средств вычислительной техники</p>
+            <hr class="border-light">
+        </div>
+    </div>
+
+    <!-- Статистика - Первый ряд -->
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/equipmenttype/" class="text-decoration-none">
+                <div class="card border-primary h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-primary font-weight-light mb-0">{{ stats.equipment_types }}</h2>
+                                <p class="card-text text-muted">Типов оборудования</p>
+                            </div>
+                            <div class="display-4 text-primary">
+                                <i class="fa fa-cubes"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/equipmentmodel/" class="text-decoration-none">
+                <div class="card border-success h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-success font-weight-light mb-0">{{ stats.equipment_models }}</h2>
+                                <p class="card-text text-muted">Моделей оборудования</p>
+                            </div>
+                            <div class="display-4 text-success">
+                                <i class="fa fa-laptop"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/location/" class="text-decoration-none">
+                <div class="card border-warning h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-warning font-weight-light mb-0">{{ stats.locations }}</h2>
+                                <p class="card-text text-muted">Мест установки</p>
+                            </div>
+                            <div class="display-4 text-warning">
+                                <i class="fa fa-map-marker"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/department/" class="text-decoration-none">
+                <div class="card border-info h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-info font-weight-light mb-0">{{ stats.departments }}</h2>
+                                <p class="card-text text-muted">Подразделений</p>
+                            </div>
+                            <div class="display-4 text-info">
+                                <i class="fa fa-building"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Статистика - Второй ряд -->
+    <div class="row">
+        <div class="col-md-4 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/employee/" class="text-decoration-none">
+                <div class="card border-success h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-success font-weight-light mb-0">{{ stats.employees }}</h2>
+                                <p class="card-text text-muted">Сотрудников</p>
+                            </div>
+                            <div class="display-4 text-success">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/equipment/" class="text-decoration-none">
+                <div class="card border-danger h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-danger font-weight-light mb-0">{{ stats.equipment }}</h2>
+                                <p class="card-text text-muted">Единиц оборудования</p>
+                            </div>
+                            <div class="display-4 text-danger">
+                                <i class="fa fa-desktop"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">  <!-- ← Добавлен mb-3 -->
+            <a href="/admin/equipmentlog/" class="text-decoration-none">
+                <div class="card border-dark h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="card-title text-dark font-weight-light mb-0">{{ stats.logs }}</h2>
+                                <p class="card-text text-muted">Записей в журнале</p>
+                            </div>
+                            <div class="display-4 text-dark">
+                                <i class="fa fa-history"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Быстрый доступ -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4 class="text-secondary">📋 Быстрый доступ</h4>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                <a href="/admin/equipment/new/" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> Добавить оборудование
+                </a>
+                <a href="/admin/employee/new/" class="btn btn-success">
+                    <i class="fa fa-user-plus"></i> Добавить сотрудника
+                </a>
+                <a href="/admin/location/new/" class="btn btn-warning">
+                    <i class="fa fa-plus-circle"></i> Добавить место
+                </a>
+                <a href="/admin/department/new/" class="btn btn-info">
+                    <i class="fa fa-plus-square"></i> Добавить подразделение
+                </a>
+                <a href="/admin/equipmenttype/new/" class="btn btn-secondary">
+                    <i class="fa fa-plus"></i> Добавить тип оборудования
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подсказка -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fa fa-lightbulb-o"></i>
+                <strong>💡 Подсказка:</strong>
+                Кликните на любую карточку со статистикой, чтобы перейти к соответствующему разделу.
+                Используйте меню сверху или кнопки быстрого доступа для управления данными.
+            </div>
+        </div>
+    </div>
+
+    <!-- Последние операции -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fa fa-clock-o"></i> Последние операции в журнале</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.logs > 0 %}
+                        <p class="text-muted">Всего записей: {{ stats.logs }}</p>
+                        <a href="/admin/equipmentlog/" class="btn btn-outline-primary btn-sm">
+                            <i class="fa fa-list"></i> Перейти к журналу
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Журнал операций пуст. Начните добавлять оборудование!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

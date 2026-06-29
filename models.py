@@ -35,7 +35,7 @@ class JSONField(TextField):
             return {}
 
 
-# ---------- 1. EquipmentType ----------
+# ---------- EquipmentType ----------
 class EquipmentType(BaseModel):
     name = CharField(max_length=100, unique=True, verbose_name="Тип оборудования")
 
@@ -48,7 +48,7 @@ class EquipmentType(BaseModel):
         return self.name
 
 
-# ---------- 2. EquipmentModel ----------
+# ---------- EquipmentModel ----------
 class EquipmentModel(BaseModel):
     name = CharField(max_length=200, verbose_name="Наименование модели")
     brand = CharField(max_length=100, verbose_name="Бренд")
@@ -77,7 +77,7 @@ class EquipmentModel(BaseModel):
         return f"{self.brand} {self.name}"
 
 
-# ---------- 3. Location (иерархия) ----------
+# ---------- Location (иерархия) ----------
 class Location(BaseModel):
     LOCATION_TYPES = [
         ('territory', 'Территория'),
@@ -93,8 +93,6 @@ class Location(BaseModel):
     name = CharField(max_length=200, verbose_name="Наименование")
     location_type = CharField(max_length=20, choices=LOCATION_TYPES, verbose_name="Тип места")
     parent = ForeignKeyField('self', backref='children', null=True, on_delete='CASCADE')
-    gps_lat = DecimalField(max_digits=9, decimal_places=6, null=True, verbose_name="Широта")
-    gps_lon = DecimalField(max_digits=9, decimal_places=6, null=True, verbose_name="Долгота")
     description = TextField(null=True, verbose_name="Описание")
 
     class Meta:
@@ -123,7 +121,7 @@ class Location(BaseModel):
         return result
 
 
-# ---------- 4. Department (иерархия) ----------
+# ---------- Department (иерархия) ----------
 class Department(BaseModel):
     name = CharField(max_length=200, unique=True, verbose_name="Наименование подразделения")
     parent = ForeignKeyField('self', backref='children', null=True, on_delete='CASCADE')
@@ -148,7 +146,7 @@ class Department(BaseModel):
         return " → ".join(reversed(ancestors))
 
 
-# ---------- 5. Employee ----------
+# ---------- Employee ----------
 class Employee(BaseModel):
     first_name = CharField(max_length=100, verbose_name="Имя")
     last_name = CharField(max_length=100, verbose_name="Фамилия")
@@ -174,7 +172,7 @@ class Employee(BaseModel):
         return self.__str__()
 
 
-# ---------- 6. Equipment ----------
+# ---------- Equipment ----------
 class Equipment(BaseModel):
     """Средство вычислительной техники (СВТ)"""
     STATUS_CHOICES = [
@@ -210,12 +208,10 @@ class Equipment(BaseModel):
     # Даты
     delivery_date = DateField(  # ← Переименовано с purchase_date
         null=True,
-        blank=True,
         verbose_name="Дата поставки"
     )
     commissioning_date = DateField(
         null=True,
-        blank=True,
         verbose_name="Дата ввода в эксплуатацию"
     )
 
@@ -230,7 +226,6 @@ class Equipment(BaseModel):
     # Дополнительно
     description = TextField(
         null=True,
-        blank=True,
         verbose_name="Примечание"
     )
 
@@ -251,7 +246,7 @@ class Equipment(BaseModel):
         return self.responsible_department.name if self.responsible_department else "Не указан"
 
 
-# ---------- 7. EquipmentLog ----------
+# ---------- EquipmentLog ----------
 class EquipmentLog(BaseModel):
     ACTION_CHOICES = [
         ('create', 'Создание'),

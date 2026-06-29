@@ -5,3 +5,4 @@ WTForms==3.0.1
 peewee-migrate==1.1.8
 wtf-peewee==3.0.0
 python-dotenv==1.0.0
+flask-babel==4.0.0

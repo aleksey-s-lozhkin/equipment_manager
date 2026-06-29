@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from models import db, BaseModel
 """
 Утилита для управления миграциями peewee-migrate
 Использование:

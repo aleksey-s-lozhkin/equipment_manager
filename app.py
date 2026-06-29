@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_babel import Babel
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.peewee import ModelView
@@ -17,47 +17,81 @@ db.connect()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-for-testing-only')
 app.config['DEBUG'] = os.getenv('DEBUG', 'True').lower() == 'true'
-# Устанавливаем язык по умолчанию (русский)
 app.config['BABEL_DEFAULT_LOCALE'] = 'ru'
 
-# Создаём экземпляр Babel
+# ---------- ОТКЛЮЧАЕМ ТЕМУ ИЗ CDN ----------
+app.config['FLASK_ADMIN_SWATCH'] = None
+
+# ---------- МАРШРУТЫ ДЛЯ ЛОКАЛЬНОЙ СТАТИКИ ----------
+@app.route('/static/bootstrap/css/<path:filename>')
+def serve_bootstrap_css(filename):
+    return send_from_directory('static/bootstrap/css', filename)
+
+@app.route('/static/bootstrap/js/<path:filename>')
+def serve_bootstrap_js(filename):
+    return send_from_directory('static/bootstrap/js', filename)
+
+@app.route('/static/font-awesome/css/<path:filename>')
+def serve_fontawesome_css(filename):
+    return send_from_directory('static/font-awesome/css', filename)
+
+# ---------- Babel ----------
 babel = Babel(app)
-
-# ---------- СМЕНА ТЕМЫ ----------
-app.config['FLASK_ADMIN_SWATCH'] = 'simplex'
-
 
 # ---------- КАСТОМНАЯ ГЛАВНАЯ СТРАНИЦА АДМИНКИ ----------
 class MyAdminIndexView(AdminIndexView):
     """Кастомная главная страница админки"""
 
     def render(self, template, **kwargs):
-        # Добавляем статистику для отображения на главной
+        # 1. Общая статистика
+        total_equipment = Equipment.select().count()
+        in_use = Equipment.select().where(Equipment.status == 'in_use').count()
+        in_repair = Equipment.select().where(Equipment.status == 'repair').count()
+        in_reserve = Equipment.select().where(Equipment.status == 'reserve').count()
+        without_user = Equipment.select().where(Equipment.current_user.is_null()).count()
+
+        # 2. По типам оборудования
+        from peewee import fn
+        by_type = []
+        for eq_type in EquipmentType.select():
+            count = Equipment.select().join(EquipmentModel).where(
+                EquipmentModel.equipment_type == eq_type
+            ).count()
+            if count > 0:
+                by_type.append({
+                    'name': eq_type.name,
+                    'count': count
+                })
+
+        # 3. Последние 5 операций
+        recent_logs = EquipmentLog.select().order_by(EquipmentLog.date.desc()).limit(5)
+
         stats = {
+            'total_equipment': total_equipment,
+            'in_use': in_use,
+            'in_repair': in_repair,
+            'in_reserve': in_reserve,
+            'without_user': without_user,
+            'by_type': by_type,
+            'recent_logs': recent_logs,
+            # Старые поля для совместимости
             'equipment_types': EquipmentType.select().count(),
             'equipment_models': EquipmentModel.select().count(),
             'locations': Location.select().count(),
             'departments': Department.select().count(),
             'employees': Employee.select().count(),
-            'equipment': Equipment.select().count(),
+            'equipment': total_equipment,
             'logs': EquipmentLog.select().count(),
         }
-        return super().render(
-            template,
-            stats=stats,
-            **kwargs
-        )
-
-    # Переопределяем шаблон для использования container-fluid
-    def get_base_template(self):
-        return 'admin/master.html'
+        return super().render(template, stats=stats, **kwargs)
 
 # ---------- НАСТРОЙКА АДМИНКИ ----------
 admin = Admin(
     app,
     name='Управление оборудованием',
     template_mode='bootstrap4',
-    index_view=MyAdminIndexView()
+    index_view=MyAdminIndexView(),
+    base_template='admin/master.html'
 )
 
 # ---------- КАСТОМНЫЕ VIEW ДЛЯ РУССКИХ НАЗВАНИЙ ----------
@@ -66,6 +100,10 @@ class EquipmentTypeView(ModelView):
     column_labels = {
         'id': 'ID',
         'name': 'Название типа',
+    }
+
+    form_args = {
+        'name': {'label': 'Название типа'},
     }
 
 class EquipmentModelView(ModelView):
@@ -83,6 +121,19 @@ class EquipmentModelView(ModelView):
         'extra_specs': 'Дополнительные характеристики',
     }
 
+    form_args = {
+        'name': {'label': 'Наименование модели'},
+        'brand': {'label': 'Бренд'},
+        'equipment_type': {'label': 'Тип оборудования'},
+        'processor': {'label': 'Процессор'},
+        'ram_gb': {'label': 'ОЗУ (ГБ)'},
+        'storage_gb': {'label': 'Хранилище (ГБ)'},
+        'storage_type': {'label': 'Тип накопителя'},
+        'os': {'label': 'Операционная система'},
+        'screen_size': {'label': 'Диагональ экрана'},
+        'extra_specs': {'label': 'Дополнительные характеристики'},
+    }
+
 class LocationView(ModelView):
     column_labels = {
         'id': 'ID',
@@ -93,6 +144,13 @@ class LocationView(ModelView):
         'full_path': 'Полный путь',
     }
 
+    form_args = {
+        'name': {'label': 'Наименование'},
+        'location_type': {'label': 'Тип места'},
+        'parent': {'label': 'Находится внутри'},
+        'description': {'label': 'Описание'},
+    }
+
 class DepartmentView(ModelView):
     column_labels = {
         'id': 'ID',
@@ -101,6 +159,13 @@ class DepartmentView(ModelView):
         'short_name': 'Краткое наименование',
         'code': 'Код подразделения',
         'full_path': 'Полный путь',
+    }
+
+    form_args = {
+        'name': {'label': 'Наименование подразделения'},
+        'parent': {'label': 'Головное подразделение'},
+        'short_name': {'label': 'Краткое наименование'},
+        'code': {'label': 'Код подразделения'},
     }
 
 class EmployeeView(ModelView):
@@ -119,6 +184,19 @@ class EmployeeView(ModelView):
         'full_name': 'Полное имя',
     }
 
+    form_args = {
+        'first_name': {'label': 'Имя'},
+        'last_name': {'label': 'Фамилия'},
+        'middle_name': {'label': 'Отчество'},
+        'email': {'label': 'Email'},
+        'phone': {'label': 'Телефон'},
+        'department': {'label': 'Подразделение'},
+        'position': {'label': 'Должность'},
+        'is_active': {'label': 'Активен'},
+        'date_joined': {'label': 'Дата приёма'},
+        'date_left': {'label': 'Дата увольнения'},
+    }
+
 class EquipmentView(ModelView):
     column_labels = {
         'id': 'ID',
@@ -133,8 +211,20 @@ class EquipmentView(ModelView):
         'commissioning_date': 'Дата ввода в эксплуатацию',
         'status': 'Статус',
         'description': 'Примечание',
-        'full_location_path': 'Полный путь места',
-        'responsible_department_name': 'Ответственное подразделение',
+    }
+
+    form_args = {
+        'inventory_number': {'label': 'Инвентарный номер'},
+        'serial_number': {'label': 'Серийный номер'},
+        'model': {'label': 'Модель'},
+        'location': {'label': 'Место установки'},
+        'responsible_department': {'label': 'Ответственное подразделение'},
+        'department': {'label': 'Фактическое подразделение'},
+        'current_user': {'label': 'Текущий пользователь'},
+        'delivery_date': {'label': 'Дата поставки'},
+        'commissioning_date': {'label': 'Дата ввода в эксплуатацию'},
+        'status': {'label': 'Статус'},
+        'description': {'label': 'Примечание'},
     }
 
 class ApprovalView(ModelView):
@@ -149,7 +239,17 @@ class ApprovalView(ModelView):
         'required': 'Обязательное согласование',
     }
 
-# ---------- КАСТОМНЫЙ VIEW ДЛЯ ЛОГОВ (ОСТАВЛЯЕМ ОДИН РАЗ) ----------
+    form_args = {
+        'log_entry': {'label': 'Запись журнала'},
+        'department': {'label': 'Согласующее подразделение'},
+        'is_approved': {'label': 'Согласовано'},
+        'approved_by': {'label': 'Кто согласовал'},
+        'approved_at': {'label': 'Дата согласования'},
+        'comment': {'label': 'Комментарий'},
+        'required': {'label': 'Обязательное согласование'},
+    }
+
+# ---------- КАСТОМНЫЙ VIEW ДЛЯ ЛОГОВ ----------
 class EquipmentLogView(ModelView):
     def on_model_change(self, form, model, is_created):
         if is_created:
@@ -178,6 +278,24 @@ class EquipmentLogView(ModelView):
         'old_user': 'Прежний пользователь',
         'new_user': 'Новый пользователь',
         'description': 'Комментарий',
+    }
+
+    form_args = {
+        'equipment': {'label': 'Оборудование'},
+        'action': {'label': 'Действие'},
+        'date': {'label': 'Дата и время'},
+        'initiator': {'label': 'Инициатор'},
+        'old_location': {'label': 'Прежнее место'},
+        'new_location': {'label': 'Новое место'},
+        'old_department': {'label': 'Прежнее подразделение'},
+        'new_department': {'label': 'Новое подразделение'},
+        'old_responsible_department': {'label': 'Прежний ответственный отдел'},
+        'new_responsible_department': {'label': 'Новый ответственный отдел'},
+        'old_status': {'label': 'Прежний статус'},
+        'new_status': {'label': 'Новый статус'},
+        'old_user': {'label': 'Прежний пользователь'},
+        'new_user': {'label': 'Новый пользователь'},
+        'description': {'label': 'Комментарий'},
     }
 
 # ---------- РЕГИСТРАЦИЯ МОДЕЛЕЙ ----------

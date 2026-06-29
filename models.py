@@ -300,6 +300,11 @@ class EquipmentLog(BaseModel):
     def __str__(self):
         return f"{self.equipment} - {self.get_action_display()} ({self.date.strftime('%Y-%m-%d %H:%M')})"
 
+    def get_action_display(self):
+        """Возвращает человекочитаемое название действия"""
+        choices = dict(self.ACTION_CHOICES)
+        return choices.get(self.action, self.action)
+
 
 # ---------- 8. Approval ----------
 class Approval(BaseModel):

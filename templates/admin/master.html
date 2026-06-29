@@ -2,9 +2,16 @@
 
 {% block head %}
 {{ super() }}
-<!-- Добавляем только Bootstrap классы, без кастомного CSS -->
+
+<!-- Подключаем ЛОКАЛЬНЫЙ Bootstrap -->
+<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+
+<!-- FontAwesome (локально) -->
+<link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+
+<!-- Кастомные стили -->
 <style>
-    /* Только минимальное переопределение через Bootstrap */
+    /* Растягиваем админку на всю ширину */
     .container {
         max-width: 100% !important;
         padding-left: 30px !important;
@@ -30,6 +37,12 @@
         max-width: 90% !important;
     }
 </style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- Подключаем ЛОКАЛЬНЫЙ JS -->
+<script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
 
 {% block page_body %}

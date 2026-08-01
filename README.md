@@ -114,14 +114,6 @@ DEBUG=True
 HOST=0.0.0.0
 PORT=8000
 ```
-## 🎨 Тема оформления
-По умолчанию используется тема Bootstrap Simplex. Чтобы сменить тему, измените в app.py:
-
-```python
-app.config['FLASK_ADMIN_SWATCH'] = 'flatly'  # или 'cosmo', 'darkly', 'slate'
-```
-Доступные темы: flatly, cosmo, simplex, journal, slate, darkly, lumen, cyborg, united
-
 ## 🐛 Устранение проблем
 ### Порт занят
 Если порт 8000 занят, измените PORT в .env:

@@ -1,10 +1,16 @@
 import json
+import os
 
 from peewee import *
 from datetime import datetime
 
 # ---------- БАЗА ДАННЫХ ----------
-db = SqliteDatabase('equipment.db')
+DB_PATH = os.getenv(
+    "DB_PATH",
+    "equipment.db"
+)
+
+db = SqliteDatabase(DB_PATH)
 
 
 # ---------- БАЗОВАЯ МОДЕЛЬ ----------
